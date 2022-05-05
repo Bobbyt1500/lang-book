@@ -38,11 +38,6 @@
 				"npm: watch-tests"
 			],
 			"problemMatcher": []
-		},
-		{
-			"type": "shell",
-			"label": "tasks: generate-release",
-			"command": "vsce package -o release/language-book-v1.0.0.vsix"
 		}
 	]
 }
