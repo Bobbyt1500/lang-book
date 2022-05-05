@@ -69,6 +69,7 @@ type QuizProps = {
 };
 
 type QuizState = {
+    filteredQuestions: LanguageBlock[][],
     questionSet: LanguageBlock[][],
     chosenQuestion: LanguageBlock[],
     // Map containing block index and the given answer
@@ -81,8 +82,20 @@ export class Quiz extends preact.Component<QuizProps, QuizState> {
     constructor(props: any) {
         super(props);
 
+        // Filter out questions that dont have any definitions
+        let filteredData = this.props.data.filter((e: LanguageBlock[]) => {
+
+            // Check this line for defs
+            for (const block of e) {
+                if (block.definition) return true;
+            };
+
+            return false;
+        });
+
         this.state = {
-            questionSet: JSON.parse(JSON.stringify(this.props.data)),
+            filteredQuestions: filteredData, 
+            questionSet: JSON.parse(JSON.stringify(filteredData)),
             chosenQuestion: [],
             answers: new Map<number, string>(),
             showAnswers: false,
@@ -127,7 +140,7 @@ export class Quiz extends preact.Component<QuizProps, QuizState> {
         if (this.state.questionSet.length === 0) {
             // If there are no more questions, reset quiz without chosen questions
             this.setState({
-                questionSet: JSON.parse(JSON.stringify(this.props.data)),
+                questionSet: JSON.parse(JSON.stringify(this.state.filteredQuestions)),
                 chosenQuestion: [],
                 showAnswers: false,
                 answers: new Map<number, string>()

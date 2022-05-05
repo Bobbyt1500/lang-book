@@ -111,8 +111,19 @@ const Question = ({ data, prompt, answers, showAnswers }) => {
 class Quiz extends preact.Component {
     constructor(props) {
         super(props);
+        // Filter out questions that dont have any definitions
+        let filteredData = this.props.data.filter((e) => {
+            // Check this line for defs
+            for (const block of e) {
+                if (block.definition)
+                    return true;
+            }
+            ;
+            return false;
+        });
         this.state = {
-            questionSet: JSON.parse(JSON.stringify(this.props.data)),
+            filteredQuestions: filteredData,
+            questionSet: JSON.parse(JSON.stringify(filteredData)),
             chosenQuestion: [],
             answers: new Map(),
             showAnswers: false,
@@ -149,7 +160,7 @@ class Quiz extends preact.Component {
         if (this.state.questionSet.length === 0) {
             // If there are no more questions, reset quiz without chosen questions
             this.setState({
-                questionSet: JSON.parse(JSON.stringify(this.props.data)),
+                questionSet: JSON.parse(JSON.stringify(this.state.filteredQuestions)),
                 chosenQuestion: [],
                 showAnswers: false,
                 answers: new Map()
