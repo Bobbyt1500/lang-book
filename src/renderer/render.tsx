@@ -6,16 +6,16 @@ import { Quiz } from "./quiz";
 const Block: preact.FunctionalComponent<{data: LanguageBlock, vocab: boolean}> = ({data, vocab}) => {
     let originalClassList: string[] = [];
 
-    if (data.pronunciation !== undefined || data.definition !== undefined) originalClassList.push("def-text");
+    if (data.pronunciation || data.definition) originalClassList.push("def-text");
     if (vocab) originalClassList.push("vocab-text");
 
     return (
         <div class="block">
-            { data.definition !== undefined && 
-            <span class="tooltip definition">{data.definition}</span>}
+            { data.definition && 
+            <span class="tooltip hover-tooltip definition">{data.definition}</span>}
 
-            { data.pronunciation !== undefined && 
-            <span class="tooltip pronunciation">{data.pronunciation}</span>}
+            { data.pronunciation && 
+            <span class="tooltip hover-tooltip pronunciation">{data.pronunciation}</span>}
 
             <span class={originalClassList.join(" ")}>{data.original}</span>
         </div>

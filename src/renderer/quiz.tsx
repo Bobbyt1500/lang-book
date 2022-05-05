@@ -30,14 +30,20 @@ const Question: preact.FunctionalComponent<QuestionProps> = ({data, prompt, answ
                     <div class="question-block">
                         
                         {/* Question Word */}
-                        <span onClick={() => {
+                        <div class="block">
+                            {block.pronunciation && <span class="tooltip question-tooltip">
+                                {block.pronunciation}
+                            </span>}
+
+                            <span onClick={() => {
                                 // Prompt for user input if this is a def block
                                 // And it is not in showAnswers state
                                 if (definition && !showAnswers) prompt(i);
-                            }}
-                            class={
+
+                            }} class={
                                 definition ? "question-def-text" : "question-text"
                             }>{block.original}</span>
+                        </div>
 
                         {/* Given Answer */}
                         {inputtedAnswer &&

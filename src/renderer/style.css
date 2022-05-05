@@ -17,12 +17,15 @@ Display Styles
     position: relative;
 }
 
-.block:hover .tooltip {
+.block:hover .hover-tooltip {
     visibility: visible;
 }
 
-.tooltip {
+.hover-tooltip {
     visibility: hidden;
+}
+
+.tooltip {
     white-space: nowrap;
     font-size: 10px;
     position: absolute;
@@ -45,6 +48,10 @@ Display Styles
 }
 
 .definition {
+    top: -10px;
+}
+
+.question-tooltip {
     top: -10px;
 }
 
