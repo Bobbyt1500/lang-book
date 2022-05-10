@@ -1,67 +1,10 @@
 import * as preact from "preact";
+import { useState } from "preact/hooks";
 import { RendererContext } from "vscode-notebook-renderer";
-import { LanguageBlock } from "../extension/languageDataProvider";
+import { LanguageBlock } from "../../extension/languageDataProvider";
+import Question from "./question";
 import { v4 as uuidv4 } from "uuid";
-import internal = require("stream");
-
-type QuestionProps = {
-    data: LanguageBlock[], 
-    prompt: (i: number) => void,
-    answers: Map<number, string>,
-    showAnswers: boolean
-};
-
-const Question: preact.FunctionalComponent<QuestionProps> = ({data, prompt, answers, showAnswers}) => {
-    return (
-        <div class="question">
-            {/* For each word in the question */}
-            {data.map((block, i) => {
-
-                let answerCorrect = false;
-
-                let inputtedAnswer = answers.get(i); // The answer given by the user for this word
-                let definition = block.definition;
-
-                if (definition && inputtedAnswer) {
-                    answerCorrect = definition.toLowerCase() === inputtedAnswer.toLowerCase();
-                }
-
-                return (
-                    <div class="question-block">
-                        
-                        {/* Question Word */}
-                        <div class="block">
-                            {block.pronunciation && <span class="tooltip question-tooltip">
-                                {block.pronunciation}
-                            </span>}
-
-                            <span onClick={() => {
-                                // Prompt for user input if this is a def block
-                                // And it is not in showAnswers state
-                                if (definition && !showAnswers) prompt(i);
-
-                            }} class={
-                                definition ? "question-def-text" : "question-text"
-                            }>{block.original}</span>
-                        </div>
-
-                        {/* Given Answer */}
-                        {inputtedAnswer &&
-                        <span class="input-text">
-                            {inputtedAnswer}
-                        </span>}
-                            
-                        {/* Quesion Answer */}
-                        {showAnswers && definition &&
-                        <span class="answer-text" data-correct={answerCorrect.toString()}>
-                            {definition}
-                        </span>}
-                    </div>
-                );
-            })}
-        </div>
-    );
-};
+import "@djthoms/pretty-checkbox/dist/pretty-checkbox.min.css";
 
 type QuizProps = {
     data: LanguageBlock[][],
@@ -75,7 +18,8 @@ type QuizState = {
     // Map containing block index and the given answer
     answers: Map<number, string>,
     showAnswers: boolean,
-    uuid: string
+    uuid: string,
+    showPronunciations: boolean
 };
 
 export class Quiz extends preact.Component<QuizProps, QuizState> {
@@ -99,7 +43,8 @@ export class Quiz extends preact.Component<QuizProps, QuizState> {
             chosenQuestion: [],
             answers: new Map<number, string>(),
             showAnswers: false,
-            uuid: uuidv4()
+            uuid: uuidv4(),
+            showPronunciations: true
         };
 
         this.promptAnswer = this.promptAnswer.bind(this);
@@ -168,29 +113,48 @@ export class Quiz extends preact.Component<QuizProps, QuizState> {
     render() { 
         let remainingQuestions = this.state.chosenQuestion.length !== 0; // If there are remaining questions
         return (
-            <div class="quiz-container">
-                <div>
-                    {/* If there are remaining questions, render them */}
-                    {remainingQuestions &&
-                    <Question data={this.state.chosenQuestion} prompt={this.promptAnswer} answers={this.state.answers} showAnswers={this.state.showAnswers} />
-                    }
-
-                    <div class="controls-container">
-                        {/* Render quiz controls if there are remaining questions */}
-                        {this.state.showAnswers && remainingQuestions && <button class="controls-button" onClick={() => {this.chooseQuestion();}}>Next</button>}
-                        {this.state.showAnswers || (remainingQuestions && <button class="controls-button" onClick={() => {
-                            this.setState({showAnswers: true});
-                        }}>Submit</button>)}
-
-                        
-                        {remainingQuestions || <button class="controls-button" onClick={() => {
-                            // Restart quiz by choosing a new question
-                            this.chooseQuestion();
-                        }}>Restart</button>}
-                        
+            <preact.Fragment>
+                
+                {/* Quiz config controls */}
+                <div class="quiz-config-container">
+                <div class="pretty p-switch p-fill">
+        
+                    <input defaultChecked={this.state.showPronunciations} onChange={() => {
+                        this.setState({showPronunciations: !this.state.showPronunciations});
+                    }} type="checkbox" />
+        
+                    <div class="state">
+                        <label>Show Pronunciations</label>
                     </div>
                 </div>
             </div>
+                
+                {/* Main Quiz Container */}
+                <div class="quiz-container">
+                    <div>
+                        {/* If there are remaining questions, render them */}
+                        {remainingQuestions &&
+                        <Question data={this.state.chosenQuestion} prompt={this.promptAnswer} answers={this.state.answers}
+                            showAnswers={this.state.showAnswers} showPronunciations={this.state.showPronunciations} />
+                        }
+
+                        <div class="controls-container">
+                            {/* Render quiz controls if there are remaining questions */}
+                            {this.state.showAnswers && remainingQuestions && <button class="controls-button" onClick={() => {this.chooseQuestion();}}>Next</button>}
+                            {this.state.showAnswers || (remainingQuestions && <button class="controls-button" onClick={() => {
+                                this.setState({showAnswers: true});
+                            }}>Submit</button>)}
+
+                            
+                            {remainingQuestions || <button class="controls-button" onClick={() => {
+                                // Restart quiz by choosing a new question
+                                this.chooseQuestion();
+                            }}>Restart</button>}
+                            
+                        </div>
+                    </div>
+                </div>
+            </preact.Fragment>
         );
     }
 }

@@ -1,4 +1,35 @@
 /*
+Header styles
+----------------------- 
+*/
+
+#tabContainer {
+    display: flex;
+    justify-content: left;
+}
+
+.tab-button {
+    padding: 5px 20px 5px 20px;
+    
+    border: none;
+
+    background-color:rgb(66, 105, 222);
+    color: white;
+    transition: background-color 0.5s;
+}
+
+.tab-button:hover { 
+    background-color: rgb(51, 83, 178);
+    cursor: pointer;
+}
+
+.tab-button[data-active] {
+    background-color: rgb(51, 83, 178);
+    border-bottom: 1px solid red;
+}
+
+
+/*
 
 Display Styles
 ------------------------
@@ -147,4 +178,14 @@ Quiz Controls
 .controls-button:hover { 
     background-color: rgb(51, 83, 178);
     cursor: pointer;
+}
+
+/*
+Quiz Config
+------------------
+*/
+
+.quiz-config-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
