@@ -49,6 +49,9 @@ Language Book is a Visual Studio Code extension that allows you to write and pra
 
 ## Release Notes
 
+### 1.1.1
+- Renderer now uses theme colors
+
 ### 1.1.0
 - Add seperate quiz and overview tabs
 - Add ability to toggle pronunciations in quiz
