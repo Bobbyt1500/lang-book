@@ -19,7 +19,8 @@ type QuizState = {
     answers: Map<number, string>,
     showAnswers: boolean,
     uuid: string,
-    showPronunciations: boolean
+    showPronunciations: boolean,
+    randomMode: boolean
 };
 
 export class Quiz extends preact.Component<QuizProps, QuizState> {
@@ -44,7 +45,8 @@ export class Quiz extends preact.Component<QuizProps, QuizState> {
             answers: new Map<number, string>(),
             showAnswers: false,
             uuid: uuidv4(),
-            showPronunciations: true
+            showPronunciations: true,
+            randomMode: true
         };
 
         this.promptAnswer = this.promptAnswer.bind(this);
@@ -93,8 +95,8 @@ export class Quiz extends preact.Component<QuizProps, QuizState> {
             return;
         };
 
-        // Select random question
-        let index = Math.floor(Math.random() * this.state.questionSet.length);
+        // Select question
+        let index = this.state.randomMode ? Math.floor(Math.random() * this.state.questionSet.length) : 0;
 
         // Remove it from the available question set
         let ret = this.state.questionSet[index];
@@ -117,17 +119,28 @@ export class Quiz extends preact.Component<QuizProps, QuizState> {
                 
                 {/* Quiz config controls */}
                 <div class="quiz-config-container">
-                <div class="pretty p-switch p-fill">
-        
-                    <input defaultChecked={this.state.showPronunciations} onChange={() => {
-                        this.setState({showPronunciations: !this.state.showPronunciations});
-                    }} type="checkbox" />
-        
-                    <div class="state">
-                        <label>Show Pronunciations</label>
+                    <div class="pretty p-switch p-fill">
+            
+                        <input defaultChecked={this.state.showPronunciations} onChange={() => {
+                            this.setState({showPronunciations: !this.state.showPronunciations});
+                        }} type="checkbox" />
+            
+                        <div class="state">
+                            <label>Show Pronunciations</label>
+                        </div>
+                    </div>
+
+                    <div class="pretty p-switch p-fill">
+            
+                        <input defaultChecked={this.state.randomMode} onChange={() => {
+                            this.setState({randomMode: !this.state.randomMode});
+                        }} type="checkbox" />
+            
+                        <div class="state">
+                            <label>Random Mode</label>
+                        </div>
                     </div>
                 </div>
-            </div>
                 
                 {/* Main Quiz Container */}
                 <div class="quiz-container">
